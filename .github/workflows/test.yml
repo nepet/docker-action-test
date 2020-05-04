@@ -40,7 +40,7 @@ jobs:
         GITHUB_USERNAME: ${{ github.actor }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         DOCKER_LABEL: ${{ secrets.DOCKER_LABEL }}
-        DOCKER_IMAGE: ${{ steps.dockerimage.outputs.imageFullName }}
+        DOCKER_IMAGE: ${{ steps.version.outputs.tag }}
       with:
         username: ${{ secrets.DEPLOY_USER }}
         host: ${{ secrets.DEPLOY_HOST }}
@@ -50,4 +50,4 @@ jobs:
           echo $DOCKER_IMAGE
           echo $GITHUB_TOKEN | docker login docker.pkg.github.com -u $GITHUB_USERNAME --password-stdin
           docker ps -a -q -f label=$DOCKER_LABEL | xargs -r docker stop  
-          docker run -d -l label=$DOCKER_LABEL docker.pkg.github.com/nepet/docker-action-test/test:latest
+          docker run -d -l label=$DOCKER_LABEL $DOCKER_IMAGE
