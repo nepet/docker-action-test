@@ -26,6 +26,7 @@ jobs:
     - name: publish
       uses: appleboy/ssh-action@master
       with:
+        username: ${{ secrets.DEPLOY_USER }}
         host: ${{ secrets.DEPLOY_HOST }}
         key: ${{ secrets.DEPLOY_SSH_KEY }}
         script: whoami
