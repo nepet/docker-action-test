@@ -14,7 +14,7 @@ jobs:
       with:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
-        repository: nepet/nepet/test
+        repository: nepet/docker-action-test/test
         registry: docker.pkg.github.com
         tag_with_ref: true
         build_args: >-
