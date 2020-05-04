@@ -12,14 +12,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Build Docker Image
-      uses: docker/build-push-action@v1.1.0
+    # - name: Build Docker Image
+    #   uses: docker/build-push-action@v1.1.0
+    #   with:
+    #     username: ${{ github.actor }}
+    #     password: ${{ secrets.GITHUB_TOKEN }}
+    #     repository: nepet/docker-action-test/test
+    #     registry: docker.pkg.github.com
+    #     tag_with_ref: true
+    #     build_args: "\
+    #         HELLO=${{ secrets.HELLO_SECRET }},\
+    #         WORLD=${{ env.WORLD_TEXT }}"
+    - name: publish
+      uses: appleboy/ssh-action@master
       with:
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-        repository: nepet/docker-action-test/test
-        registry: docker.pkg.github.com
-        tag_with_ref: true
-        build_args: "\
-            HELLO=${{ secrets.HELLO_SECRET }},\
-            WORLD=${{ env.WORLD_TEXT }}"
+        host: ${{ secrets.DEPLOY_HOST }}
+        key: ${{ secrets.DEPLOY_SSH_KEY }}
+        script: whoami
