@@ -4,7 +4,7 @@ on:
       -master
 
 env:
-  WORLD_TEXT=world world world world
+  WORLD_TEXT: world world world world
 
 jobs:
   build:
