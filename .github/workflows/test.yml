@@ -10,8 +10,8 @@ jobs:
     steps:
     - uses: actions/ceckout@v2
     - name: Build Docker Image
-        uses: docker/build-push-action@v1.1.0
-        with:
+      uses: docker/build-push-action@v1.1.0
+      with:
         password: ${{ secrets.GITHUB_TOKEN }}
         repository: nepet/test
         registry: docker.pkg.github.com
