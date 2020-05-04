@@ -21,8 +21,8 @@ jobs:
       image: nepet/docker-action-test/test
       registry: docker.pkg.github.com
       buildArgs: "\
-            HELLO=${{ secrets.HELLO_SECRET }},\
-            WORLD=${{ env.WORLD_TEXT }}"
+        HELLO=${{ secrets.HELLO_SECRET }},\
+        WORLD=${{ env.WORLD_TEXT }}"
     - name: publish
       uses: appleboy/ssh-action@master
       env:
