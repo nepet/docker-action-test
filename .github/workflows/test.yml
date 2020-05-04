@@ -17,6 +17,6 @@ jobs:
         repository: nepet/docker-action-test/test
         registry: docker.pkg.github.com
         tag_with_ref: true
-        build_args: >-
-            HELLO=this is my personal hell,
-            WORLD=this is my personal world
+        build_args: "\
+            HELLO=this is my personal hell,\
+            WORLD=this is my personal world"
