@@ -34,7 +34,7 @@ jobs:
         username: ${{ secrets.DEPLOY_USER }}
         host: ${{ secrets.DEPLOY_HOST }}
         key: ${{ secrets.DEPLOY_SSH_KEY }}
-        envs: GITHUB_USERNAME,GITHUB_TOKEN,DOCKER_LABEL
+        envs: GITHUB_USERNAME,GITHUB_TOKEN,DOCKER_LABEL,TEST
         script: |
           echo "I AM $DOCKER_LABEL" > test.txt
           echo "ANOTHER I AM $DOCKER_LABEL"
