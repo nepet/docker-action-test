@@ -16,14 +16,14 @@ jobs:
       name: Build Docker Image
       id: docker_build
       env:
-        HELLO_SECRET=${{ secrets.HELLO_SECRET }}
+        HELLO_SECRET=${{ secrets.HelloSecret }}
       with:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
         image: nepet/docker-action-test/test
         registry: docker.pkg.github.com
         buildArgs: "\
-          HELLO=${{ env.HELLO_SECRET }},\
+          HELLO=$HELLO_SECRET,\
           WORLD=${{ env.WORLD_TEXT }}"
     - uses: appleboy/ssh-action@master
       name: publish
