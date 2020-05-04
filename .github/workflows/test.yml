@@ -12,6 +12,7 @@ jobs:
     - name: Build Docker Image
       uses: docker/build-push-action@v1.1.0
       with:
+        username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
         repository: nepet/test
         registry: docker.pkg.github.com
