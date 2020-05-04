@@ -13,15 +13,14 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build Docker Image
-      uses: docker/build-push-action@v1.1.0
-      id: dockerimage
-      with:
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-        repository: nepet/docker-action-test/test
-        registry: docker.pkg.github.com
-        tag_with_ref: true
-        build_args: "\
+    uses: mr-smithers-excellent/docker-build-push@v3
+    id: docker_build
+    with:
+      username: ${{ github.actor }}
+      password: ${{ secrets.GITHUB_TOKEN }}
+      image: nepet/docker-action-test/test
+      registry: docker.pkg.github.com
+      buildArgs: "\
             HELLO=${{ secrets.HELLO_SECRET }},\
             WORLD=${{ env.WORLD_TEXT }}"
     - name: publish
@@ -30,7 +29,7 @@ jobs:
         GITHUB_USERNAME: ${{ github.actor }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         DOCKER_LABEL: ${{ secrets.DOCKER_LABEL }}
-        DOCKER_IMAGE: ${{ steps.dockerimage.outputs.imageFullName }}
+        DOCKER_IMAGE: ${{ steps.docker_build.outputs.imageFullName }}
       with:
         username: ${{ secrets.DEPLOY_USER }}
         host: ${{ secrets.DEPLOY_HOST }}
