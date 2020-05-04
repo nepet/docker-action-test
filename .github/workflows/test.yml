@@ -25,8 +25,16 @@ jobs:
     #         WORLD=${{ env.WORLD_TEXT }}"
     - name: publish
       uses: appleboy/ssh-action@master
+      env:
+        GITHUB_USERNAME: ${{ github.actor }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        DOCKER_LABEL: ${{ secrets.DOCKER_LABEL }}
       with:
         username: ${{ secrets.DEPLOY_USER }}
         host: ${{ secrets.DEPLOY_HOST }}
         key: ${{ secrets.DEPLOY_SSH_KEY }}
-        script: whoami
+        script: |
+          echo $DOCKER_LABEL
+          docker login docker.pkg.github.com -u $GITHUB_USERNAME -p $GITHUB_TOKEN
+          docker ps -a -q -f label=$DOCKER_LABEL | xargs -r docker stop  
+        # docker run -dit --rm -l label=$DOCKER_LABEL -p 5000:5000 docker.pkg.github.com/bbh-website/website:pr-6-merge
