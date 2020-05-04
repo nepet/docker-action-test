@@ -18,5 +18,5 @@ jobs:
         registry: docker.pkg.github.com
         tag_with_ref: true
         build_args: "\
-            HELLO=this is my personal hell,\
+            HELLO=${{ secrets.HELLO_SECRET }},\
             WORLD=this is my personal world"
