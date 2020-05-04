@@ -34,7 +34,7 @@ jobs:
         host: ${{ secrets.DEPLOY_HOST }}
         key: ${{ secrets.DEPLOY_SSH_KEY }}
         script: |
-          echo $DOCKER_LABEL
+          echo ${{ secrets.DOCKER_LABEL }} > test.txt
           docker login docker.pkg.github.com -u $GITHUB_USERNAME -p $GITHUB_TOKEN
           docker ps -a -q -f label=$DOCKER_LABEL | xargs -r docker stop  
         # docker run -dit --rm -l label=$DOCKER_LABEL -p 5000:5000 docker.pkg.github.com/bbh-website/website:pr-6-merge
