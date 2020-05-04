@@ -1,10 +1,11 @@
 on:
-  push:
+  pull_request:
     branch:
       -master
 
 env:
   WORLD_TEXT: world world world world
+  LABEL: bbh-website
 
 jobs:
   build:
@@ -12,26 +13,34 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: mr-smithers-excellent/docker-build-push@v3
+    - name: Version from Ref
+      id: version
+      run: |
+        if [ ${GITHUB_REF##*/} == "master" ]; then export TAG=latest;\
+        elif [ $(cut -d '/' -f 1 <<< ${GITHUB_REF#*/}) == "heads" ]; then export TAG=${GITHUB_REF#refs/heads/};\
+        elif [ $(cut -d '/' -f 1 <<< ${GITHUB_REF#*/}) == "pull" ]; then export TAG=pr-${GITHUB_REF#refs/pull/};\
+        elif [ $(cut -d '/' -f 1 <<< ${GITHUB_REF#*/}) == "tags" ]; then export TAG=${GITHUB_REF#refs/tags/}; fi
+        echo ::set-output name=tag::${TAG//\//-}
+    - uses: docker/build-push-action@v1.1.0
       name: Build Docker Image
-      id: docker_build
-      env:
-        HELLO_SECRET=${{ secrets.HelloSecret }}
+      id: docker_image
       with:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
-        image: nepet/docker-action-test/test
+        repository: nepet/docker-action-test/test
         registry: docker.pkg.github.com
-        buildArgs: "\
-          HELLO=$HELLO_SECRET,\
-          WORLD=${{ env.WORLD_TEXT }}"
-    - uses: appleboy/ssh-action@master
-      name: publish
+        tags: ${{ steps.version.outputs.tag }}
+        labels: ${{ env.LABEL }}
+        build_args: "\
+            HELLO=${{ secrets.HelloSecret }},\
+            WORLD=${{ env.WORLD_TEXT }}"
+    - name: publish
+      uses: appleboy/ssh-action@master
       env:
         GITHUB_USERNAME: ${{ github.actor }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         DOCKER_LABEL: ${{ secrets.DOCKER_LABEL }}
-        DOCKER_IMAGE: ${{ steps.docker_build.outputs.imageFullName }}
+        DOCKER_IMAGE: ${{ steps.dockerimage.outputs.imageFullName }}
       with:
         username: ${{ secrets.DEPLOY_USER }}
         host: ${{ secrets.DEPLOY_HOST }}
@@ -41,4 +50,4 @@ jobs:
           echo $DOCKER_IMAGE
           echo $GITHUB_TOKEN | docker login docker.pkg.github.com -u $GITHUB_USERNAME --password-stdin
           docker ps -a -q -f label=$DOCKER_LABEL | xargs -r docker stop  
-          docker run -d -l label=$DOCKER_LABEL $DOCKER_IMAGE
+          docker run -d -l label=$DOCKER_LABEL docker.pkg.github.com/nepet/docker-action-test/test:latest
