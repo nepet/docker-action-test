@@ -3,6 +3,9 @@ on:
     branch:
       -master
 
+env:
+  WORLD_TEXT=world world world world
+
 jobs:
   build:
     name: Build docker image
@@ -19,4 +22,4 @@ jobs:
         tag_with_ref: true
         build_args: "\
             HELLO=${{ secrets.HELLO_SECRET }},\
-            WORLD=this is my personal world"
+            WORLD=${{ env.WORLD_TEXT }}"
