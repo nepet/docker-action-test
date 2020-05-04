@@ -12,29 +12,32 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    # - name: Build Docker Image
-    #   uses: docker/build-push-action@v1.1.0
-    #   with:
-    #     username: ${{ github.actor }}
-    #     password: ${{ secrets.GITHUB_TOKEN }}
-    #     repository: nepet/docker-action-test/test
-    #     registry: docker.pkg.github.com
-    #     tag_with_ref: true
-    #     build_args: "\
-    #         HELLO=${{ secrets.HELLO_SECRET }},\
-    #         WORLD=${{ env.WORLD_TEXT }}"
+    - name: Build Docker Image
+      uses: docker/build-push-action@v1.1.0
+      id: dockerimage
+      with:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        repository: nepet/docker-action-test/test
+        registry: docker.pkg.github.com
+        tag_with_ref: true
+        build_args: "\
+            HELLO=${{ secrets.HELLO_SECRET }},\
+            WORLD=${{ env.WORLD_TEXT }}"
     - name: publish
       uses: appleboy/ssh-action@master
       env:
         GITHUB_USERNAME: ${{ github.actor }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         DOCKER_LABEL: ${{ secrets.DOCKER_LABEL }}
+        DOCKER_IMAGE: ${{ steps.dockerimage.outputs.imageFullName }}
       with:
         username: ${{ secrets.DEPLOY_USER }}
         host: ${{ secrets.DEPLOY_HOST }}
         key: ${{ secrets.DEPLOY_SSH_KEY }}
-        envs: GITHUB_USERNAME,GITHUB_TOKEN,DOCKER_LABEL
+        envs: GITHUB_USERNAME,GITHUB_TOKEN,DOCKER_LABEL,DOCKER_IMAGE
         script: |
+          echo $DOCKER_IMAGE
           echo $GITHUB_TOKEN | docker login docker.pkg.github.com -u $GITHUB_USERNAME --password-stdin
           docker ps -a -q -f label=$DOCKER_LABEL | xargs -r docker stop  
-          docker run -d -l label=$DOCKER_LABEL docker.pkg.github.com/nepet/docker-action-test/test:latest
+          docker run -d -l label=$DOCKER_LABEL $DOCKER_IMAGE
