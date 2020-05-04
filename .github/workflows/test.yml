@@ -37,4 +37,4 @@ jobs:
         script: |
           echo $GITHUB_TOKEN | docker login docker.pkg.github.com -u $GITHUB_USERNAME --password-stdin
           docker ps -a -q -f label=$DOCKER_LABEL | xargs -r docker stop  
-          docker run -d -l label=$DOCKER_LABEL 5000:5000 docker.pkg.github.com/nepet/docker-action-test:latest
+          docker run -d -l label=$DOCKER_LABEL docker.pkg.github.com/nepet/docker-action-test:latest
