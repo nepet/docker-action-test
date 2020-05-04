@@ -29,16 +29,12 @@ jobs:
         GITHUB_USERNAME: ${{ github.actor }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         DOCKER_LABEL: ${{ secrets.DOCKER_LABEL }}
-        TEST: "TEST"
       with:
         username: ${{ secrets.DEPLOY_USER }}
         host: ${{ secrets.DEPLOY_HOST }}
         key: ${{ secrets.DEPLOY_SSH_KEY }}
-        envs: GITHUB_USERNAME,GITHUB_TOKEN,DOCKER_LABEL,TEST
+        envs: GITHUB_USERNAME,GITHUB_TOKEN,DOCKER_LABEL
         script: |
-          echo "I AM $DOCKER_LABEL" > test.txt
-          echo "ANOTHER I AM $DOCKER_LABEL"
-          echo "THIS IS TEST $TEST"
           echo $GITHUB_TOKEN | docker login docker.pkg.github.com -u $GITHUB_USERNAME --password-stdin
-        # docker ps -a -q -f label=$DOCKER_LABEL | xargs -r docker stop  
-        # docker run -dit --rm -l label=$DOCKER_LABEL -p 5000:5000 docker.pkg.github.com/bbh-website/website:pr-6-merge
+          docker ps -a -q -f label=$DOCKER_LABEL | xargs -r docker stop  
+          docker run -d -l label=$DOCKER_LABEL 5000:5000 docker.pkg.github.com/nepet/docker-action-test:latest
