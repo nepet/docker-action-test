@@ -1,0 +1,8 @@
+FROM alpine:latest
+
+ARG HELLO
+ARG WORLD
+ENV HELLO_VAR=$HELLO
+ENV WORLD_VAR=$WORLD
+
+CMD ["sh", "-c", "echo $HELLO_VAR $WORLD_VAR"]

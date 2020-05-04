@@ -1,0 +1,21 @@
+on:
+    push:
+        branch:
+            -master
+
+jobs:
+    build:
+        name: Build docker image
+        runs-on: ubuntu-latest
+        steps:
+        - uses: actions/ceckout@v2
+        - name: Build Docker Image
+            uses: docker/build-push-action@v1.1.0
+            with:
+            password: ${{ secrets.GITHUB_TOKEN }}
+            repository: nepet/test
+            registry: docker.pkg.github.com
+            tag_with_ref: true
+            build_args: >-
+                HELLO=this is my personal hell
+                WORLD=this is my personal world
